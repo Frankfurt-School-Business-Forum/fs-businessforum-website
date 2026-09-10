@@ -2349,8 +2349,23 @@ section {
     margin: 0 auto;
 }
 
+/* Vorsitzende (2) oben, Heads (3) darunter, goldener Trennstrich dazwischen.
+   Beide Reihen sind zentriert -> die 2 oben sitzen ueber den Luecken der 3
+   ("m"-Form: 2 Boegen oben, 3 Beine unten). */
+.chairmen-grid--pair {
+    grid-template-columns: repeat(2, 350px);
+}
+
+/* Trennstrich zwischen den Reihen etwas enger ziehen, damit die Gruppen zusammengehoeren */
+.team-divider {
+    margin: 1.25rem 0;
+}
+
 @media (max-width: 900px) {
     .chairmen-grid {
+        grid-template-columns: 1fr;
+    }
+    .chairmen-grid--pair {
         grid-template-columns: 1fr;
     }
 }
