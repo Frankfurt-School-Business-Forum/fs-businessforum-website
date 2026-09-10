@@ -1,0 +1,7 @@
+# GitHub-Pages-Konfiguration (Jekyll, legacy build).
+#
+# Die hier gelisteten Dateien bleiben im Repository (fuer Team + KI-Tools
+# auffindbar), werden aber NICHT auf fs-businessforum.com veroeffentlicht.
+# Wenn kuenftig weitere rein interne Dokumente dazukommen, hier ergaenzen.
+exclude:
+  - LESSONS-LEARNED.md
