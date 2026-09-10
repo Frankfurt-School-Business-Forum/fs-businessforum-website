@@ -1,5 +1,9 @@
 # Lessons Learned – fs-businessforum.com
 
+> **Intern.** Dieses Dokument liegt bewusst im Repository (fuer Team + KI-Tools),
+> wird aber ueber `_config.yml` von GitHub Pages ausgeschlossen und ist **nicht**
+> unter fs-businessforum.com erreichbar.
+
 Laufendes Protokoll von Vorfällen auf der Website und was wir daraus gelernt haben.
 Neueste Einträge oben. Bitte kurz und ehrlich halten: Symptom → Ursache → Fix → Lehre.
 
