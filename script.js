@@ -219,17 +219,18 @@ function endIntro() {
     // Pre-initialize animations before visual transition
     initAnimations();
 
-    // Use requestAnimationFrame for smoother transition
+    // CRITICAL: Scrollen SYNCHRON wieder freigeben — NICHT in requestAnimationFrame.
+    // rAF-Callbacks werden in Hintergrund-Tabs pausiert; der setTimeout unten aber
+    // nicht. Lag das Entsperren im rAF, wurde das Overlay entfernt, waehrend
+    // `intro-playing` (overflow:hidden) am <body> kleben blieb -> Seite dauerhaft
+    // gesperrt ("haengt voellig"). Jetzt laeuft die Freigabe garantiert.
+    document.body.classList.remove('intro-playing');
+    document.body.classList.add('intro-complete');
+    lenis.start();
+
+    // Rein kosmetischer Fade-Uebergang — darf ruhig im rAF liegen.
     requestAnimationFrame(() => {
         introOverlay.classList.add('fade-out');
-        document.body.classList.remove('intro-playing');
-        document.body.classList.add('intro-complete');
-
-        // Re-enable scrolling after frame
-        requestAnimationFrame(() => {
-            lenis.start();
-        });
-
     });
 
     // Remove intro overlay from DOM after animation completes
@@ -237,6 +238,16 @@ function endIntro() {
         introOverlay.remove();
     }, 1400);
 }
+
+// Sicherheitsnetz: Falls der Tab waehrend des Intros im Hintergrund war und ein
+// exotischer Pfad das Entsperren doch verpasst, beim Zurueckkehren garantiert
+// aufraeumen — die Seite darf NIE scroll-gesperrt zurueckbleiben.
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && !document.getElementById('introOverlay')) {
+        document.body.classList.remove('intro-playing');
+        document.body.classList.add('intro-complete');
+    }
+});
 
 // ================================
 // Navigation
