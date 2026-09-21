@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FS Business Forum - Signatur-Generator</title>
+    <title>FS Business Forum - Signature Generator</title>
     <style>
         :root{--navy:#133a70;--line:#e0e0e0;--muted:#666;}
         *{box-sizing:border-box;}
         body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f5f5f5;color:#222;}
         .wrap{max-width:1040px;margin:0 auto;padding:32px 20px 64px;}
+        .brand{display:flex;align-items:center;gap:16px;margin:0 0 28px;}
+        .brand-logo{height:44px;width:auto;flex:0 0 auto;}
         h1{font-size:1.5rem;margin:0 0 4px;color:var(--navy);}
-        .sub{color:var(--muted);margin:0 0 28px;font-size:.92rem;max-width:70ch;line-height:1.5;}
-        .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+        .sub{color:var(--muted);margin:0;font-size:.92rem;max-width:70ch;line-height:1.5;}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch;}
         @media(max-width:820px){.grid{grid-template-columns:1fr;}}
-        .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;}
+        .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;display:flex;flex-direction:column;}
         .card h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px;}
         label{display:block;font-size:.82rem;font-weight:600;margin:14px 0 5px;}
         label .opt{font-weight:400;color:var(--muted);}
@@ -29,45 +31,46 @@
 </head>
 <body>
 <div class="wrap">
-    <h1>Signatur-Generator</h1>
-    <p class="sub">Daten eintragen, Vorschau pruefen, auf &bdquo;Signatur kopieren&ldquo; klicken und in Outlook oder Gmail einfuegen. Das Logo ist fest eingebettet (Base64) und kommt beim Empfaenger immer an.</p>
+    <header class="brand">
+        <img class="brand-logo" src="fsbf-logo.png" alt="FS Business Forum">
+        <div>
+            <h1>Signature Generator</h1>
+            <p class="sub">Enter your details, check the preview, click &bdquo;Copy signature&ldquo; and paste into Outlook or Gmail. The logo is embedded (Base64), so it always reaches the recipient.</p>
+        </div>
+    </header>
     <div class="grid">
         <div class="card">
-            <h2>Deine Daten</h2>
+            <h2>Your details</h2>
             <label for="fName">Name</label>
-            <input id="fName" type="text" placeholder="Vor- und Nachname" autocomplete="off">
+            <input id="fName" type="text" placeholder="First and last name" autocomplete="off">
 
-            <label for="fRole">Position</label>
+            <label for="fRole">Role</label>
             <select id="fRole">
-                <option value="" selected>Position waehlen &hellip;</option>
-                <option>Chair</option>
-                <option>Head of Corporate</option>
-                <option>Head of Corporate Relations</option>
-                <option>Head of Event</option>
-                <option>Head of Marketing</option>
-                <option>Head of Speaker Relations</option>
-                <option>Head of IT</option>
-                <option>Head of Finance</option>
-                <option>Consultant</option>
-                <option value="__other">Andere &hellip;</option>
+                <option value="" selected>Select role &hellip;</option>
+                <option>Member of Speaker Relations</option>
+                <option>Member of Corporate Relations</option>
+                <option>Member of Marketing Department</option>
+                <option>Member of IT Department</option>
+                <option>Member of Event Department</option>
+                <option value="__other">Other &hellip;</option>
             </select>
-            <input id="fRoleOther" type="text" placeholder="Eigene Position" style="display:none;margin-top:8px;" autocomplete="off">
+            <input id="fRoleOther" type="text" placeholder="Custom role" style="display:none;margin-top:8px;" autocomplete="off">
 
-            <label for="fPhone">Telefon <span class="opt">&ndash; optional</span></label>
+            <label for="fPhone">Phone <span class="opt">&ndash; optional</span></label>
             <input id="fPhone" type="tel" placeholder="+49 &hellip;" autocomplete="off">
 
-            <label for="fMail">E-Mail</label>
-            <input id="fMail" type="email" placeholder="vorname.nachname@fs-businessforum.com" autocomplete="off">
+            <label for="fMail">Email</label>
+            <input id="fMail" type="email" placeholder="first.last@fs-businessforum.com" autocomplete="off">
 
             <div class="actions">
-                <button id="copyBtn" type="button">Signatur kopieren</button>
+                <button id="copyBtn" type="button">Copy signature</button>
                 <span id="status"></span>
             </div>
         </div>
 
         <div class="card">
-            <h2>Vorschau</h2>
-            <p class="preview-hint">So sieht deine Signatur beim Empfaenger aus.</p>
+            <h2>Preview</h2>
+            <p class="preview-hint">This is how your signature looks to the recipient.</p>
             <div class="stage">
                 <!-- SIGNATURE START (dieser Block wird kopiert) -->
                 <table id="sig" cellpadding="0" cellspacing="0" border="0" role="presentation"
@@ -86,8 +89,8 @@
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">
                                 <tr>
                                     <td align="center" style="padding-bottom:8px;">
-                                        <div id="sigName" style="font-size:20px;font-weight:700;color:#111;line-height:1.1;">Fips, das FSBF-Schnabeltier</div>
-                                        <div id="sigRole" style="font-size:13px;font-style:italic;color:#666;line-height:1.1;">Maskottchen</div>
+                                        <div id="sigName" style="font-size:20px;font-weight:700;color:#111;line-height:1.1;">Fips, the FSBF platypus</div>
+                                        <div id="sigRole" style="font-size:13px;font-style:italic;color:#666;line-height:1.1;">Mascot</div>
                                     </td>
                                 </tr>
                             </table>
@@ -110,7 +113,7 @@
                             </table>
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin-bottom:12px;border-collapse:collapse;">
                                 <tr><td style="font-weight:700;color:#111;padding-bottom:6px;">FS Business Forum &ndash; Connecting Minds. Creating Future.</td></tr>
-                                <tr><td style="color:#444;padding-bottom:4px;">13. &amp; 14. November 2026</td></tr>
+                                <tr><td style="color:#444;padding-bottom:4px;">November 13 &amp; 14, 2026</td></tr>
                                 <tr><td style="color:#444;">Adickesallee 32&ndash;34, 60322 Frankfurt am Main, Germany</td></tr>
                             </table>
                             <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin-top:8px;">
@@ -136,8 +139,8 @@
     var nameEl = $('fName'), roleEl = $('fRole'), roleOther = $('fRoleOther'),
         phoneEl = $('fPhone'), mailEl = $('fMail'), statusEl = $('status');
 
-    // Neutrales Maskottchen-Default (bewusst KEIN Disney-"Perry"): frei aenderbar.
-    var DEF = { name: 'Fips, das FSBF-Schnabeltier', role: 'Maskottchen', mail: 'info@fs-businessforum.com' };
+    // Neutral mascot default (deliberately NOT Disney's "Perry"): freely editable.
+    var DEF = { name: 'Fips, the FSBF platypus', role: 'Mascot', mail: 'info@fs-businessforum.com' };
 
     function currentRole() {
         return roleEl.value === '__other' ? roleOther.value.trim() : roleEl.value;
@@ -180,7 +183,7 @@
 
     $('copyBtn').addEventListener('click', function () {
         if (!nameEl.value.trim() || !mailEl.value.trim()) {
-            setStatus('Bitte mindestens Name und E-Mail ausfuellen.', false);
+            setStatus('Please fill in at least name and email.', false);
             return;
         }
         var sig = $('sig');
@@ -190,7 +193,7 @@
                 'text/html': new Blob([html], { type: 'text/html' }),
                 'text/plain': new Blob([sig.innerText], { type: 'text/plain' })
             })]).then(function () {
-                setStatus('Signatur kopiert. Jetzt in Outlook/Gmail einfuegen.', true);
+                setStatus('Signature copied. Now paste into Outlook/Gmail.', true);
             }).catch(function () { legacyCopy(sig); });
         } else {
             legacyCopy(sig);
@@ -207,7 +210,7 @@
             document.execCommand('copy');
             setStatus('Signatur kopiert. Jetzt in Outlook/Gmail einfuegen.', true);
         } catch (e) {
-            setStatus('Kopieren fehlgeschlagen, bitte Vorschau manuell markieren.', false);
+            setStatus('Copy failed, please select the preview manually.', false);
         }
         sel.removeAllRanges();
     }
