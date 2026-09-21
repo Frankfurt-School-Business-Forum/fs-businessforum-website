@@ -41,9 +41,6 @@
     <!-- Lenis (Smooth-Scroll) bewusst deaktiviert: die alte CDN-URL war 404, die Seite lief immer auf nativem Scrollen. script.js faellt ohne Lenis sauber auf natives Scrollen zurueck. -->
     <script defer src="script.js"></script>
 
-    <!-- Without JS the intro overlay would permanently cover the page -->
-    <noscript><style>.intro-overlay{display:none !important;}</style></noscript>
-
     <!-- Structured data: helps Google understand the event and pick sensible sitelinks -->
     <script type="application/ld+json">
     {
@@ -116,20 +113,7 @@
     <!-- Custom Cursor (desktop pointer devices only) -->
     <div class="cursor"></div>
 
-    <!-- Intro Video Overlay -->
-    <div class="intro-overlay" id="introOverlay">
-        <video id="introVideo" muted playsinline preload="auto" webkit-playsinline>
-            <source src="assets/picturesdecoration/intro.mp4" type="video/mp4">
-        </video>
-        <div class="intro-skip" id="introSkip">
-            <span>Skip</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 4l10 8-10 8V4zM19 5v14"/>
-            </svg>
-        </div>
-    </div>
-
-    <!-- Preload Images During Intro (must stay eager: display:none + lazy would never load) -->
+    <!-- Preload key images eagerly (display:none + lazy would never load) -->
     <div style="display:none;" aria-hidden="true">
         <img src="assets/picturesdecoration/christianduerrspeaking.jpg" alt="">
         <img src="assets/picturesdecoration/crowd_clapping.jpg" alt="">

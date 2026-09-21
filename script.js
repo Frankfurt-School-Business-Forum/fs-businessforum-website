@@ -117,136 +117,25 @@ if (cursor && FINE_POINTER && !REDUCED_MOTION) {
 }
 
 // ================================
-// Intro Video Animation
+// Intro entfernt
 // ================================
-const introOverlay = document.getElementById('introOverlay');
-const introVideo = document.getElementById('introVideo');
-const introSkip = document.getElementById('introSkip');
+// Frueher lag hier das Vollbild-Intro-Video mit Skip-Button. Es wurde entfernt.
+// Wir reproduzieren nur noch den Ziel-Zustand nach dem Intro: Inhalt einblenden,
+// Hero-Hintergrundvideo starten, Animationen initialisieren. Kein Scroll-Lock.
 
-// Add intro-playing class to body
-document.body.classList.add('intro-playing');
+// Ziel-Zustand sofort setzen (kein Aufblitzen des Inhalts).
+document.body.classList.remove('intro-playing');
+document.body.classList.add('intro-complete');
 
-// Disable scrolling during intro
-lenis.stop();
-
-// Reduced motion: skip the intro video entirely and reveal the page
-if (REDUCED_MOTION) {
-    requestAnimationFrame(() => endIntro());
-}
-
-// Force video to load and start playing
-if (!REDUCED_MOTION) introVideo.load();
-
-// Handle video load error
-introVideo.addEventListener('error', () => {
-    console.log('Video failed to load, skipping intro');
-    endIntro();
-});
-
-// Try to play the video immediately when it can play
-introVideo.addEventListener('canplay', () => {
-    introVideo.play().catch(e => {
-        console.log('Autoplay failed:', e);
-        endIntro();
-    });
-}, { once: true });
-
-// Also try to play immediately
-if (!REDUCED_MOTION) {
-    setTimeout(() => {
-        introVideo.play().catch(() => {});
-    }, 100);
-}
-
-// Fallback: if video doesn't start within 3 seconds, skip
-setTimeout(() => {
-    if (!introOverlay.classList.contains('fade-out')) {
-        if (introVideo.paused || introVideo.readyState < 2) {
-            console.log('Video not playing, skipping intro');
-            endIntro();
-        }
-    }
-}, 3000);
-
-// Handle video end
-introVideo.addEventListener('ended', () => {
-    endIntro();
-});
-
-// Fallback: End intro after video duration + buffer (in case 'ended' event doesn't fire)
-introVideo.addEventListener('loadedmetadata', () => {
-    const videoDuration = introVideo.duration;
-    if (videoDuration && videoDuration > 0) {
-        setTimeout(() => {
-            if (!introOverlay.classList.contains('fade-out')) {
-                console.log('Video duration timeout - ending intro');
-                endIntro();
-            }
-        }, (videoDuration * 1000) + 2500); // Video duration + 2.5s buffer
-    }
-});
-
-// Ultimate fallback: End intro after 8 seconds no matter what
-setTimeout(() => {
-    if (!introOverlay.classList.contains('fade-out')) {
-        console.log('Ultimate timeout - ending intro');
-        endIntro();
-    }
-}, 8000);
-
-// Skip button functionality
-introSkip.addEventListener('click', () => {
-    endIntro();
-});
-
-// Keyboard skip (Enter or Space)
-document.addEventListener('keydown', (e) => {
-    if ((e.key === 'Enter' || e.key === ' ') && !introOverlay.classList.contains('fade-out')) {
-        e.preventDefault();
-        endIntro();
-    }
-});
-
-function endIntro() {
-    if (introOverlay.classList.contains('fade-out')) return; // Prevent double trigger
-
-    // Start hero video playing before transition
+// Hero-Video + Animationen erst starten, wenn der restliche Script-Body
+// initialisiert ist (rAF), damit initAnimations() alle spaeter deklarierten
+// Werte sieht.
+requestAnimationFrame(() => {
     const heroVideo = document.querySelector('.hero-video');
     if (heroVideo && !REDUCED_MOTION) {
         heroVideo.play().catch(() => {});
     }
-
-    // Pre-initialize animations before visual transition
     initAnimations();
-
-    // CRITICAL: Scrollen SYNCHRON wieder freigeben — NICHT in requestAnimationFrame.
-    // rAF-Callbacks werden in Hintergrund-Tabs pausiert; der setTimeout unten aber
-    // nicht. Lag das Entsperren im rAF, wurde das Overlay entfernt, waehrend
-    // `intro-playing` (overflow:hidden) am <body> kleben blieb -> Seite dauerhaft
-    // gesperrt ("haengt voellig"). Jetzt laeuft die Freigabe garantiert.
-    document.body.classList.remove('intro-playing');
-    document.body.classList.add('intro-complete');
-    lenis.start();
-
-    // Rein kosmetischer Fade-Uebergang — darf ruhig im rAF liegen.
-    requestAnimationFrame(() => {
-        introOverlay.classList.add('fade-out');
-    });
-
-    // Remove intro overlay from DOM after animation completes
-    setTimeout(() => {
-        introOverlay.remove();
-    }, 1400);
-}
-
-// Sicherheitsnetz: Falls der Tab waehrend des Intros im Hintergrund war und ein
-// exotischer Pfad das Entsperren doch verpasst, beim Zurueckkehren garantiert
-// aufraeumen — die Seite darf NIE scroll-gesperrt zurueckbleiben.
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && !document.getElementById('introOverlay')) {
-        document.body.classList.remove('intro-playing');
-        document.body.classList.add('intro-complete');
-    }
 });
 
 // ================================
