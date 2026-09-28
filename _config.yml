@@ -5,3 +5,11 @@
 # Wenn kuenftig weitere rein interne Dokumente dazukommen, hier ergaenzen.
 exclude:
   - LESSONS-LEARNED.md
+  # Relaunch 2026: interne Arbeitslisten
+  - TODO-TEAM.md
+  - HISTORY-SOURCE.md
+  # Material fuer die spaetere Historie-Seite (Ausgabe 2025), bewusst nicht veroeffentlicht
+  - 2025
+  - previous-speakers.html
+  # Vorlage, aus der das Link-Vorschaubild (assets/og/fsbf-2026-og.jpg) gerendert wurde
+  - assets/og/og-template.html
