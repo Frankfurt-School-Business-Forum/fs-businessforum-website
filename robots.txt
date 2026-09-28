@@ -1,7 +1,14 @@
+# robots.txt – PRODUKTION: https://fs-businessforum.com/  (P2-17, Go-Live-Checkliste)
+#
+# ACHTUNG Dev: dev.fs-businessforum.com muss gesperrt bleiben. Dort weiterhin:
+#   User-agent: *
+#   Disallow: /
+# Diese Datei also nur nach Prod deployen bzw. auf Dev die Dev-Variante behalten.
+#
+# Rechtsseiten und 404 steuern sich per <meta name="robots" content="noindex"> –
+# sie werden hier bewusst NICHT gesperrt, damit Crawler das noindex sehen.
+
 User-agent: *
 Allow: /
-
-# Legal pages stay reachable for visitors but are kept out of search results
-# via <meta name="robots" content="noindex, follow"> in the pages themselves.
 
 Sitemap: https://fs-businessforum.com/sitemap.xml

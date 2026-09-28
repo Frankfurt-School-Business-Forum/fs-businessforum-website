@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Previous Speakers | FS Business Forum</title>
     <meta name="description" content="CEOs, federal ministers and investors who have spoken at the FS Business Forum &mdash; from UniCredit, Morgan Stanley, thyssenkrupp, BlackRock, Airbus, KPMG and the German Bundestag.">
+    <!-- P2-17 / A-1: Diese Seite dupliziert 1:1 die Speaker-Sektion des Archivs (27 von 27 Speakern identisch).
+         Das Archiv /2025/ ist jetzt indexierbar und kanonisch -> Signale dorthin buendeln (Canonical + og:url),
+         Seite bleibt fuer Besucher alter Links erreichbar und wird NICHT mehr in sitemap.xml gefuehrt.
+         Bewusst kein noindex: noindex + fremdes Canonical waere wieder ein widerspruechliches Signal. -->
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#040810">
 
@@ -12,43 +16,32 @@
     <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="manifest" href="site.webmanifest">
-    <link rel="canonical" href="https://fs-businessforum.com/previous-speakers.html">
+    <link rel="canonical" href="https://fs-businessforum.com/2025/">
 
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="FS Business Forum">
     <meta property="og:title" content="Previous Speakers | FS Business Forum">
     <meta property="og:description" content="CEOs, federal ministers and investors who have spoken at the FS Business Forum at Frankfurt School.">
-    <meta property="og:url" content="https://fs-businessforum.com/previous-speakers.html">
-    <meta property="og:image" content="https://fs-businessforum.com/assets/picturesdecoration/vp1_poster.jpg">
+    <meta property="og:url" content="https://fs-businessforum.com/2025/">
+    <!-- gleiches OG-Bild wie das kanonische Archiv (1200x630, 66 KB statt 1920x1080/170 KB) -->
+    <meta property="og:image" content="https://fs-businessforum.com/assets/og/fsbf-2025-recap-og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="FS Business Forum 2025 Highlights – archive">
     <meta name="twitter:card" content="summary_large_image">
 
-    <link rel="preload" href="assets/fonts/PlayfairDisplay-Medium.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="styles.css">
+    <!-- P1-7: vollstaendige Variable Font statt der defekten Medium-Datei -->
+    <link rel="preload" href="assets/fonts/PlayfairDisplay-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="styles.css?v=20260928a">
+    <!-- Gemeinsamer Mini-Header/Footer der Unterseiten (P2-4, P3-19) -->
+    <link rel="stylesheet" href="assets/css/subpage.css?v=20260928p">
 
-    <!-- This page is intentionally script-free: it must render without the intro
-         overlay / GSAP timeline, so it stays fast and fully crawlable. -->
+    <!-- Bewusst ohne script.js/GSAP (schnell, voll crawlbar). Einziges Skript:
+         die zentrale Ticket-Link-Konfiguration (2 KB, defer). -->
+    <script defer src="assets/js/ticket-link.js?v=20260928d"></script>
     <style>
-        .ps-nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            padding: 0 3rem;
-            background: rgba(4, 8, 16, 0.92);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--color-border);
-        }
-        .ps-nav-inner {
-            max-width: 1600px; margin: 0 auto; height: var(--nav-height);
-            display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
-        }
-        .ps-nav-actions { display: flex; align-items: center; gap: 1.75rem; }
-        .ps-nav-actions a {
-            color: var(--color-text-secondary); text-decoration: none;
-            font-size: 0.9rem; letter-spacing: 0.02em; transition: color 0.3s;
-            white-space: nowrap;
-        }
-        .ps-nav-actions a:hover { color: var(--color-accent); }
-        .ps-nav-actions a.nav-link-cta { color: var(--color-bg); }
-
-        .ps-main { padding: calc(var(--nav-height) + 5rem) 3rem 6rem; position: relative; }
+        /* Header ist jetzt sticky (assets/css/subpage.css) -> kein Offset fuer eine fixe Nav mehr noetig */
+        .ps-main { padding: clamp(3rem, 7vw, 5rem) 3rem 6rem; position: relative; overflow-x: hidden; overflow-x: clip; } /* Deko-Glow ragte rechts heraus (218 px) */
         .ps-container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 2; }
         .ps-header { text-align: center; margin-bottom: 4rem; }
         .ps-header .section-subtitle { margin: 1.25rem auto 0; max-width: 640px; }
@@ -69,13 +62,21 @@
             justify-content: center; align-items: center; gap: 1.25rem;
         }
         .ps-cta a { text-decoration: none; }
+        /* P3-10: styles.css verkleinert .btn mobil auf 38 px; Fokusring nicht per "transition: all" einblenden */
+        .ps-cta .btn { min-height: 48px; transition-property: background-color, color, border-color, transform, box-shadow; }
+        .ps-cta-lead {
+            flex-basis: 100%; margin: 0 0 0.5rem; text-align: center;
+            font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); color: var(--color-text); text-wrap: balance;
+        }
+        .ps-back {
+            display: block; margin-top: 1.5rem; text-align: center; font-size: 0.9rem;
+        }
+        .ps-back a { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-accent); text-decoration: none; }
+        @media (hover: hover) and (pointer: fine) { .ps-back a:hover { text-decoration: underline; } }
         @media (max-width: 768px) {
             /* Mobile turns the cards into compact rows — the badge would sit on the name */
             .ps-badge { display: none; }
-            .ps-nav { padding: 0 1.25rem; }
-            .ps-main { padding: calc(var(--nav-height) + 3rem) 1.25rem 4rem; }
-            .ps-nav-actions { gap: 1rem; }
-            .ps-nav-actions a.ps-hide-sm { display: none; }
+            .ps-main { padding: 2.5rem 1rem 4rem; }
         }
     </style>
 
@@ -469,24 +470,25 @@
 }
     </script>
 </head>
-<body>
+<body class="sp sp-speakers">
+    <a class="sp-skip" href="#main">Skip to content</a>
 
-    <div class="grain-overlay"></div>
+    <div class="grain-overlay" aria-hidden="true"></div>
 
-    <nav class="ps-nav">
-        <div class="ps-nav-inner">
-            <a href="index.html" class="nav-logo">
-                <img src="assets/FS_Business_Forum_mit.png" alt="FS Business Forum" style="height: 40px; width: 175px; position: relative; top: 4px;">
+    <header class="sp-header">
+        <div class="sp-header__inner">
+            <a class="sp-logo" href="./" aria-label="FS Business Forum – home">
+                <img src="assets/img/logo-362.png" srcset="assets/img/logo-362.png 362w, assets/img/logo-724.png 724w" sizes="(max-width: 600px) 151px, 181px" width="181" height="48" alt="FS Business Forum">
             </a>
-            <div class="ps-nav-actions">
-                <a href="index.html" class="ps-hide-sm">&larr; Back to Home</a>
-                <a href="index.html#partners" class="ps-hide-sm">Partners</a>
-                <a href="tickets.html" class="nav-link-cta">Get Tickets</a>
+            <div class="sp-header__actions">
+                <a class="sp-header__link sp-header__link--wide" href="./#speakers">2026 Speakers</a>
+                <a class="sp-header__link sp-header__link--wide" href="./#partners">Partners</a>
+                <a class="sp-btn sp-btn--sm" href="tickets.html" data-ticket-link data-cta="prev-speakers-nav">Get Tickets</a>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <main class="ps-main">
+    <main id="main" class="ps-main" tabindex="-1">
         <div class="ambient-glow top-right"></div>
         <div class="ambient-glow bottom-left"></div>
         <div class="dots-pattern top-left"></div>
@@ -502,12 +504,14 @@
                 <div class="diamond-line"><span></span></div>
             </header>
 
+            <!-- P3-5: Ebene zwischen H1 und den Speaker-H3 (heading-order) -->
+            <h2 class="sr-only">Speakers at past editions</h2>
             <div class="speakers-grid">
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/01_andrea_orcel_ceo_unicredit.png" alt="Andrea Orcel">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/01_andrea_orcel_ceo_unicredit.webp" width="480" height="480" alt="Andrea Orcel">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/UniCredit.png" alt="UniCredit">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/UniCredit.webp" width="480" height="480" alt="UniCredit">
                         </div>
                         <span class="ps-badge">Keynote Speaker</span>
                     </div>
@@ -519,9 +523,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/02_andre_munkelt_ceo_morganstanley.png" alt="André Munkelt">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/02_andre_munkelt_ceo_morganstanley.webp" width="480" height="480" alt="André Munkelt">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Morgan_Stanley.png" alt="Morgan Stanley Europe">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Morgan_Stanley.webp" width="480" height="480" alt="Morgan Stanley Europe">
                         </div>
                         <span class="ps-badge">Keynote Speaker</span>
                     </div>
@@ -533,9 +537,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/04_miguel_borrego_ceo_thyssenkrupp.png" alt="Miguel Ángel López Borrego">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/04_miguel_borrego_ceo_thyssenkrupp.webp" width="480" height="480" alt="Miguel Ángel López Borrego">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/thyssenkrupp.png" alt="thyssenkrupp">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/thyssenkrupp.webp" width="480" height="480" alt="thyssenkrupp">
                         </div>
                         <span class="ps-badge">Keynote Speaker</span>
                     </div>
@@ -547,9 +551,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/03_frank_vogel_ceo_bnpparibas.svg" alt="Frank Vogel">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/03_frank_vogel_ceo_bnpparibas.webp" width="480" height="480" alt="Frank Vogel">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/BNP_Paribas.png" alt="BNP Paribas">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/BNP_Paribas.webp" width="480" height="480" alt="BNP Paribas">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -560,9 +564,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/05_jens_koch_ceo_hk.svg" alt="Jens B. Koch">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/05_jens_koch_ceo_hk.webp" width="480" height="480" alt="Jens B. Koch">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Heckler_and_Koch.png" alt="Heckler &amp; Koch">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Heckler_and_Koch.webp" width="480" height="480" alt="Heckler &amp; Koch">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -573,9 +577,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/06_brian_heath_generalconsul_usa.png" alt="Brian Heath">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/06_brian_heath_generalconsul_usa.webp" width="480" height="480" alt="Brian Heath">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/US_Flagge.png" alt="United States">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/US_Flagge.webp" width="480" height="480" alt="United States">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -586,9 +590,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/07_christian_duerr_fdp_chef.svg" alt="Christian Dürr">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/07_christian_duerr_fdp_chef.webp" width="480" height="480" alt="Christian Dürr">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/FDP.png" alt="FDP">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/FDP.webp" width="480" height="480" alt="FDP">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -599,9 +603,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/10_christian_roehl_chiefeconomist_scalablecapital.png" alt="Christian W. Röhl">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/10_christian_roehl_chiefeconomist_scalablecapital.webp" width="480" height="480" alt="Christian W. Röhl">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Scalable_Capital.png" alt="Scalable Capital">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Scalable_Capital.webp" width="480" height="480" alt="Scalable Capital">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -612,7 +616,7 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/08_swiss_chris_influencer.svg" alt="Swiss Chris">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/08_swiss_chris_influencer.webp" width="480" height="480" alt="Swiss Chris">
                     </div>
                     <div class="speaker-info">
                         <h3 class="speaker-name">Swiss Chris</h3>
@@ -622,7 +626,7 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/09_hedgefond_henning_influencer.png" alt="Hedgefonds Henning">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/09_hedgefond_henning_influencer.webp" width="480" height="480" alt="Hedgefonds Henning">
                     </div>
                     <div class="speaker-info">
                         <h3 class="speaker-name">Hedgefonds Henning</h3>
@@ -632,9 +636,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/11Bettina_Stark-Watzinger_Former_Federal_Minister_for_Education_and_Research_FDP.png" alt="Bettina Stark-Watzinger">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/11Bettina_Stark-Watzinger_Former_Federal_Minister_for_Education_and_Research_FDP.webp" width="480" height="480" alt="Bettina Stark-Watzinger">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/FDP.png" alt="FDP">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/FDP.webp" width="480" height="480" alt="FDP">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -645,9 +649,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/12_thomas_de_maiziere_former_federal_minister_cdu.png" alt="Thomas de Maizière">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/12_thomas_de_maiziere_former_federal_minister_cdu.webp" width="480" height="480" alt="Thomas de Maizière">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/CDU.png" alt="CDU">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/CDU.webp" width="480" height="480" alt="CDU">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -658,9 +662,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/13Marco_Buschmann_Former_Federal_Minister_of_Justice_of_Germany_FDP.png" alt="Marco Buschmann">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/13Marco_Buschmann_Former_Federal_Minister_of_Justice_of_Germany_FDP.webp" width="480" height="480" alt="Marco Buschmann">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/FDP.png" alt="FDP">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/FDP.webp" width="480" height="480" alt="FDP">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -671,9 +675,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/14Franz_Josef_Jung_Former_Federal_Minister_of_Defence_of_Germany_CDU.png" alt="Franz Josef Jung">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/14Franz_Josef_Jung_Former_Federal_Minister_of_Defence_of_Germany_CDU.webp" width="480" height="480" alt="Franz Josef Jung">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/CDU.png" alt="CDU">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/CDU.webp" width="480" height="480" alt="CDU">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -684,9 +688,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/15Jack_Nasher_Negotiation_Advisor_and_Author.png" alt="Jack Nasher">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/15Jack_Nasher_Negotiation_Advisor_and_Author.webp" width="480" height="480" alt="Jack Nasher">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Jack_Nasher.png" alt="Jack Nasher">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Jack_Nasher.webp" width="480" height="480" alt="Jack Nasher">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -697,9 +701,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/16Claudia_Oeking_Member_of_the_supervisory_board_Airbus_Defence_and_Space_head_public_affairs_airbus_germany.png" alt="Claudia Oeking">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/16Claudia_Oeking_Member_of_the_supervisory_board_Airbus_Defence_and_Space_head_public_affairs_airbus_germany.webp" width="480" height="480" alt="Claudia Oeking">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Airbus.png" alt="Airbus">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Airbus.webp" width="480" height="480" alt="Airbus">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -710,7 +714,7 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/17Andreas_Grassl_Geopolitical_Analyst.png" alt="Andreas Grassl">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/17Andreas_Grassl_Geopolitical_Analyst.webp" width="480" height="480" alt="Andreas Grassl">
                     </div>
                     <div class="speaker-info">
                         <h3 class="speaker-name">Andreas Grassl</h3>
@@ -720,7 +724,7 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/18_Maika_Jahn_COO_Member_of_management_board_BlackRocksvg.png" alt="Maika Jahn">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/18_Maika_Jahn_COO_Member_of_management_board_BlackRocksvg.webp" width="480" height="480" alt="Maika Jahn">
                     </div>
                     <div class="speaker-info">
                         <h3 class="speaker-name">Maika Jahn</h3>
@@ -730,7 +734,7 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/19_Dr_Katharina_Seiler_Representative_of_the_Supervisory_Board_DWS.png" alt="Dr. Katharina Seiler">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/19_Dr_Katharina_Seiler_Representative_of_the_Supervisory_Board_DWS.webp" width="480" height="480" alt="Dr. Katharina Seiler">
                     </div>
                     <div class="speaker-info">
                         <h3 class="speaker-name">Dr. Katharina Seiler</h3>
@@ -740,9 +744,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/20_Maren_Schmitz_Head_of_Asset_Management_KPMG.png" alt="Maren Schmitz">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/20_Maren_Schmitz_Head_of_Asset_Management_KPMG.webp" width="480" height="480" alt="Maren Schmitz">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/KPMG_Logo.png" alt="KPMG">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/KPMG_Logo.webp" width="400" height="400" alt="KPMG">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -753,9 +757,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/21_Harald_Christ_CEO_and_Founder_Christ_Capital_Supervisory_Board_Member_Commerzbank_Vorsitzender_des_Investitions-_und_Innovationsbeirats_Bundesministerium_der_Finanzen.png" alt="Harald Christ">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/21_Harald_Christ_CEO_and_Founder_Christ_Capital_Supervisory_Board_Member_Commerzbank_Vorsitzender_des_Investitions-_und_Innovationsbeirats_Bundesministerium_der_Finanzen.webp" width="480" height="480" alt="Harald Christ">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Christ_Capital_Logo.png" alt="Christ Capital">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Christ_Capital_Logo.webp" width="400" height="400" alt="Christ Capital">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -766,9 +770,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/22_Ulrich_Thiem_Managing_Director_Porsche_Ventures.png" alt="Ulrich Thiem">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/22_Ulrich_Thiem_Managing_Director_Porsche_Ventures.webp" width="480" height="480" alt="Ulrich Thiem">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Porsche_Ventures_Logo.png" alt="Porsche Ventures">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Porsche_Ventures_Logo.webp" width="400" height="400" alt="Porsche Ventures">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -779,9 +783,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/23_Holger_Kneisel_Member_of_Executive_Board_KPMG.svg" alt="Holger Kneisel">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/23_Holger_Kneisel_Member_of_Executive_Board_KPMG.webp" width="480" height="480" alt="Holger Kneisel">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/KPMG_Logo.png" alt="KPMG">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/KPMG_Logo.webp" width="400" height="400" alt="KPMG">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -792,9 +796,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/24_Wilhelm_Schmid_CEO_A_Lange_Soehne.png" alt="Wilhelm Schmid">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/24_Wilhelm_Schmid_CEO_A_Lange_Soehne.webp" width="480" height="480" alt="Wilhelm Schmid">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/A_Lange_Soehne_Logo.png" alt="A. Lange &amp; Söhne">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/A_Lange_Soehne_Logo.webp" width="400" height="400" alt="A. Lange &amp; Söhne">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -805,9 +809,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/25_Kerstin_Erbe_CEO_DM.png" alt="Kerstin Erbe">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/25_Kerstin_Erbe_CEO_DM.webp" width="480" height="480" alt="Kerstin Erbe">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/dm_Logo.png" alt="dm">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/dm_Logo.webp" width="400" height="400" alt="dm">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -818,9 +822,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/26_Jaqueline_Kabuth_Vice_President_Equity_Derivatives_and_Cross_Asset_Solutions_Citi.png" alt="Jaqueline Kabuth">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/26_Jaqueline_Kabuth_Vice_President_Equity_Derivatives_and_Cross_Asset_Solutions_Citi.webp" width="480" height="480" alt="Jaqueline Kabuth">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/citi_Logo.png" alt="Citi">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/citi_Logo.webp" width="400" height="400" alt="Citi">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -831,9 +835,9 @@
                 </div>
                 <div class="speaker-card">
                     <div class="speaker-image">
-                        <img loading="lazy" decoding="async" src="assets/speaker/27_Clemes_Graf_von_Hoyos_Unternehmensinhaber_KniggeAkademie_Vorstandsvorsitzender_Deutsche-Knigge-Gesellschafte_e_V_.png" alt="Clemens Graf von Hoyos">
+                        <img loading="lazy" decoding="async" src="assets/img/speakers2025/27_Clemes_Graf_von_Hoyos_Unternehmensinhaber_KniggeAkademie_Vorstandsvorsitzender_Deutsche-Knigge-Gesellschafte_e_V_.webp" width="480" height="480" alt="Clemens Graf von Hoyos">
                         <div class="speaker-logo-badge">
-                            <img loading="lazy" decoding="async" src="assets/companiesofspeakers/Deutsche_Knigge_Gesellschaft_e.V._Logo.png" alt="Deutsche Knigge Gesellschaft e.V.">
+                            <img loading="lazy" decoding="async" src="assets/img/logos/Deutsche_Knigge_Gesellschaft_e.V._Logo.webp" width="400" height="400" alt="Deutsche Knigge Gesellschaft e.V.">
                         </div>
                     </div>
                     <div class="speaker-info">
@@ -844,47 +848,39 @@
                 </div>
             </div>
 
+            <!-- P2-2/P2-3: Ticket-CTA als einziger Primaer-Button, B2B-Anfrage sekundaer -->
             <div class="ps-cta">
-                <a href="mailto:speaker@fs-businessforum.com" class="btn btn-primary">Become a Speaker</a>
-                <a href="index.html#speakers" class="btn btn-secondary">Back to the Forum</a>
+                <p class="ps-cta-lead">Want to hear leaders like these live?</p>
+                <a href="tickets.html" class="btn btn-primary" data-ticket-link data-cta="prev-speakers">Get Tickets <span aria-hidden="true">&rarr;</span></a>
+                <a href="mailto:speaker@fs-businessforum.com" class="btn btn-secondary">Become a Speaker</a>
             </div>
+            <p class="ps-back"><a href="./#speakers">&larr; See the 2026 speaker line-up</a></p>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-main">
-                <div class="footer-brand">
-                    <span class="footer-logo">FS Business Forum</span>
-                    <p class="footer-tagline">Connecting Minds, Creating Future</p>
-                </div>
-                <div class="footer-links">
-                    <div class="footer-col">
-                        <h4>Navigate</h4>
-                        <a href="index.html#speakers">Speakers</a>
-                        <a href="previous-speakers.html">Previous Speakers</a>
-                        <a href="index.html#about">About</a>
-                        <a href="index.html#experience">Experience</a>
-                        <a href="index.html#partners">Partners</a>
-                        <a href="index.html#team">Team</a>
-                    </div>
-                    <div class="footer-col">
-                        <h4>Connect</h4>
-                        <a href="tickets.html">Tickets</a>
-                        <a href="https://www.frankfurt-school.de" target="_blank" rel="noopener noreferrer">Frankfurt School</a>
-                    </div>
-                    <div class="footer-col">
-                        <h4>Legal</h4>
-                        <a href="imprint.html">Imprint (EN)</a>
-                        <a href="impressum.html">Impressum (DE)</a>
-                        <a href="privacy.html">Privacy Policy (EN)</a>
-                        <a href="datenschutz.html">Datenschutz (DE)</a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 FS Business Forum. A student initiative of Frankfurt School of Finance &amp; Management.</p>
-            </div>
+    <!-- P2-4: nur noch existierende Ziele (Startseite 2026 bzw. Archiv 2025) -->
+    <footer class="sp-footer">
+        <div class="sp-footer__inner">
+            <nav class="sp-footer__nav" aria-label="Site">
+                <ul>
+                    <li><a href="./#speakers">Speakers 2026</a></li>
+                    <li><a href="./#programme">Programme</a></li>
+                    <li><a href="./#partners">Partners</a></li>
+                    <li><a href="./#faq">FAQ</a></li>
+                    <li><a href="2025/">2025 Recap</a></li>
+                    <li><a href="previous-speakers.html" aria-current="page">Previous Speakers</a></li>
+                    <li><a href="tickets.html" data-ticket-link data-cta="prev-speakers-footer">Get Tickets</a></li>
+                </ul>
+            </nav>
+            <p class="sp-footer__brand">&copy; 2026 <strong>FS Business Forum</strong> &middot; A student initiative of Frankfurt School of Finance &amp; Management</p>
+            <nav class="sp-footer__legal" aria-label="Legal">
+                <ul>
+                    <li><a href="imprint.html" lang="en" hreflang="en">Imprint</a></li>
+                    <li><a href="impressum.html" lang="de" hreflang="de">Impressum</a></li>
+                    <li><a href="privacy.html" lang="en" hreflang="en">Privacy Policy</a></li>
+                    <li><a href="datenschutz.html" lang="de" hreflang="de">Datenschutz</a></li>
+                </ul>
+            </nav>
         </div>
     </footer>
 
