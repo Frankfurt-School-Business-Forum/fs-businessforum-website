@@ -1613,7 +1613,8 @@ if (HAS_GSAP) safeInit('gsap polish', () => {
 // ================================
 // Corporate-Partner: Karte klappt darunter ein Detail-Panel auf (ein Panel pro Tier offen), Sprachwahl EN/DE per Flagge
 // ================================
-safeInit('partner details', () => {
+const partnerBindings = new WeakSet();
+function initPartnerDetails() {
     const toggles = Array.from(document.querySelectorAll('.pcard--toggle[aria-controls]'));
     if (!toggles.length) return;
     const panelOf = btn => document.getElementById(btn.getAttribute('aria-controls'));
@@ -1627,7 +1628,8 @@ safeInit('partner details', () => {
 
     toggles.forEach(btn => {
         const panel = panelOf(btn);
-        if (!panel) return;
+        if (!panel || partnerBindings.has(btn)) return;
+        partnerBindings.add(btn);
         btn.addEventListener('click', () => {
             const willOpen = btn.getAttribute('aria-expanded') !== 'true';
             const tier = btn.closest('.ptier');
@@ -1644,6 +1646,8 @@ safeInit('partner details', () => {
 
     // Links wie "the companies of Schwarz Group" im Workshop-Block oeffnen direkt das passende Panel
     document.querySelectorAll('[data-open-partner]').forEach(link => {
+        if (partnerBindings.has(link)) return;
+        partnerBindings.add(link);
         link.addEventListener('click', (e) => {
             const btn = document.getElementById(link.getAttribute('data-open-partner'));
             if (!btn) return;
@@ -1655,6 +1659,8 @@ safeInit('partner details', () => {
     });
 
     document.querySelectorAll('.pdetail').forEach(panel => {
+        if (partnerBindings.has(panel)) return;
+        partnerBindings.add(panel);
         const langBtns = Array.from(panel.querySelectorAll('[data-lang-btn]'));
         langBtns.forEach(b => b.addEventListener('click', () => {
             const lang = b.getAttribute('data-lang-btn');
@@ -1662,7 +1668,9 @@ safeInit('partner details', () => {
             panel.querySelectorAll('.pdetail-text[data-lang]').forEach(t => { t.hidden = t.getAttribute('data-lang') !== lang; });
         }));
     });
-});
+}
+window.fsbfInitPartnerDetails = initPartnerDetails;
+safeInit('partner details', initPartnerDetails);
 
 // ================================
 // Aftermovie: YouTube erst nach Klick laden (youtube-nocookie.com), vorher nur das lokale Vorschaubild
