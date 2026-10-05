@@ -701,10 +701,9 @@ function berlinDayNumber(ms) {
 
 // ================================
 // 9 · Speaker-reveal countdown (P0-3)
-// data-target is maintained by the team (not changed here). Expired or invalid target: the
-// digits stay hidden and the neutral line shows – never "00 : 00 : 00 : 00" or "right now".
-// Screen readers get one calm sr-only summary (role=timer, aria-live=off) instead of the
-// ticking digits; with paused/reduced motion it ticks per minute and hides the seconds.
+// Published CMS content is loaded independently; unavailable content keeps the card hidden.
+// Expiry hides digits and shows the CMS message. Accessible summaries and the one-second
+// timer cadence are unchanged, including motion and visibility resynchronization.
 // ================================
 safeInit('countdown', () => {
     const el = document.getElementById('speakerCountdown');
@@ -713,7 +712,11 @@ safeInit('countdown', () => {
     const box = el.closest('.speaker-countdown') || el.parentElement;
     const fallback = box.querySelector('.countdown-fallback');
     const summary = box.querySelector('.countdown-sr');
-    const target = parseEventTime(el.getAttribute('data-target'));
+    const card = el.closest('[data-cms-countdown]');
+    if (!card) return;
+    const heading = card.querySelector('.spk-more-title');
+    const label = box.querySelector('.countdown-label');
+    let target = NaN;
 
     const nums = {};
     el.querySelectorAll('[data-cd]').forEach(n => { nums[n.getAttribute('data-cd')] = n; });
@@ -731,10 +734,7 @@ safeInit('countdown', () => {
         if (fallback) fallback.hidden = false;
     };
 
-    if (!live || !nums.days || !(target > Date.now())) {
-        showFallback();
-        return;
-    }
+    if (!live || !fallback || !heading || !label || !nums.days || !nums.hours || !nums.minutes || !nums.seconds) return;
 
     const pad = (n) => (n < 10 ? '0' : '') + n;
     const plural = (n, word) => n + ' ' + word + (n === 1 ? '' : 's');
@@ -769,16 +769,54 @@ safeInit('countdown', () => {
         if (target > Date.now()) timer = setInterval(tick, 1000);
     };
 
-    live.hidden = false;
-    if (fallback) fallback.hidden = true;
-    schedule();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const query = '*[_type == "eventSettings" && _id == "eventSettings"][0]{countdownEnabled,countdownHeading,countdownLabel,countdownTarget,countdownExpiredMessage}';
+    const url = 'https://0kh5rd3y.apicdn.sanity.io/v2025-02-19/data/query/production?perspective=published&query=' + encodeURIComponent(query);
+    const hasText = (value) => typeof value === 'string' && value.trim().length > 0;
 
-    document.addEventListener('fsbf:motion', schedule);
-    onMediaChange(REDUCED_MQ, schedule);
-    // background tabs throttle intervals: re-sync as soon as the tab is visible again
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && timer) tick();
-    });
+    fetch(url, { credentials: 'omit', signal: controller.signal })
+        .then(response => {
+            if (!response.ok) throw new Error('Countdown settings unavailable');
+            return response.json();
+        })
+        .then(payload => {
+            if (controller.signal.aborted) return;
+            const settings = payload && payload.result;
+            if (!settings || settings.countdownEnabled !== true) return;
+            if (![settings.countdownHeading, settings.countdownLabel, settings.countdownExpiredMessage].every(hasText)) return;
+            // CMS targets must identify an absolute instant, not the visitor's local time.
+            if (typeof settings.countdownTarget !== 'string'
+                || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/i.test(settings.countdownTarget)) return;
+            target = parseEventTime(settings.countdownTarget);
+            if (!Number.isFinite(target)) return;
+            heading.textContent = settings.countdownHeading;
+            label.textContent = settings.countdownLabel;
+            fallback.textContent = settings.countdownExpiredMessage;
+            card.hidden = false;
+
+            if (!(target > Date.now())) {
+                showFallback();
+                return;
+            }
+            live.hidden = false;
+            fallback.hidden = true;
+            schedule();
+
+            document.addEventListener('fsbf:motion', schedule);
+            onMediaChange(REDUCED_MQ, schedule);
+            // Background tabs throttle intervals: re-sync when the tab becomes visible.
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' && timer) tick();
+            });
+        })
+        .catch(() => {
+            // Technical failure is not an editorial expiry state.
+            if (timer) clearInterval(timer);
+            timer = null;
+            card.hidden = true;
+        })
+        .finally(() => clearTimeout(timeout));
 });
 
 // ================================
@@ -1575,7 +1613,8 @@ if (HAS_GSAP) safeInit('gsap polish', () => {
 // ================================
 // Corporate-Partner: Karte klappt darunter ein Detail-Panel auf (ein Panel pro Tier offen), Sprachwahl EN/DE per Flagge
 // ================================
-safeInit('partner details', () => {
+const partnerBindings = new WeakSet();
+function initPartnerDetails() {
     const toggles = Array.from(document.querySelectorAll('.pcard--toggle[aria-controls]'));
     if (!toggles.length) return;
     const panelOf = btn => document.getElementById(btn.getAttribute('aria-controls'));
@@ -1589,7 +1628,8 @@ safeInit('partner details', () => {
 
     toggles.forEach(btn => {
         const panel = panelOf(btn);
-        if (!panel) return;
+        if (!panel || partnerBindings.has(btn)) return;
+        partnerBindings.add(btn);
         btn.addEventListener('click', () => {
             const willOpen = btn.getAttribute('aria-expanded') !== 'true';
             const tier = btn.closest('.ptier');
@@ -1606,6 +1646,8 @@ safeInit('partner details', () => {
 
     // Links wie "the companies of Schwarz Group" im Workshop-Block oeffnen direkt das passende Panel
     document.querySelectorAll('[data-open-partner]').forEach(link => {
+        if (partnerBindings.has(link)) return;
+        partnerBindings.add(link);
         link.addEventListener('click', (e) => {
             const btn = document.getElementById(link.getAttribute('data-open-partner'));
             if (!btn) return;
@@ -1617,6 +1659,8 @@ safeInit('partner details', () => {
     });
 
     document.querySelectorAll('.pdetail').forEach(panel => {
+        if (partnerBindings.has(panel)) return;
+        partnerBindings.add(panel);
         const langBtns = Array.from(panel.querySelectorAll('[data-lang-btn]'));
         langBtns.forEach(b => b.addEventListener('click', () => {
             const lang = b.getAttribute('data-lang-btn');
@@ -1624,7 +1668,9 @@ safeInit('partner details', () => {
             panel.querySelectorAll('.pdetail-text[data-lang]').forEach(t => { t.hidden = t.getAttribute('data-lang') !== lang; });
         }));
     });
-});
+}
+window.fsbfInitPartnerDetails = initPartnerDetails;
+safeInit('partner details', initPartnerDetails);
 
 // ================================
 // Aftermovie: YouTube erst nach Klick laden (youtube-nocookie.com), vorher nur das lokale Vorschaubild
