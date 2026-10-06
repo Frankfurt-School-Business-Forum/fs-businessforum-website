@@ -101,6 +101,14 @@
         const lists = Array.from(document.querySelectorAll('.proof-marquee .lm-list'));
         const hosts = document.querySelector('.ws-hosts');
         const seen = new Set();
+        // Static fallback from the HTML stays unless the CMS delivers at least one usable partner.
+        const usable = records.filter(p => p && categories.includes(p.category) && text(p._id) && text(p.name)
+            && text(p.logoAlt) && p.logo && validLogo(p.logo) && Number.isInteger(p.sortOrder) && p.sortOrder >= 0);
+        if (!usable.length) return;
+        section.querySelectorAll('.ptier .pcards').forEach(list => { list.textContent = ''; });
+        section.querySelectorAll('.ptier > .pdetail').forEach(panel => panel.remove());
+        lists.forEach(list => { list.textContent = ''; });
+        if (hosts) hosts.textContent = '';
         categories.forEach(category => {
             const tier = section.querySelector('.ptier--' + category);
             const size = category === 'platinum' ? 'lg' : category === 'event' ? 'tile' : 'md';
@@ -153,6 +161,6 @@
     fetch('https://0kh5rd3y.apicdn.sanity.io/v2025-02-19/data/query/production?perspective=published&query=' + encodeURIComponent(query), {credentials: 'omit', signal: controller.signal})
         .then(response => { if (!response.ok) throw new Error('Partner content unavailable'); return response.json(); })
         .then(payload => { if (!controller.signal.aborted) render(payload && payload.result); })
-        .catch(() => { /* No editorial fallback; unrelated initialization is independent. */ })
+        .catch(() => { /* Static fallback in the HTML stays visible. */ })
         .finally(() => clearTimeout(timeout));
 })();

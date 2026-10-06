@@ -701,7 +701,7 @@ function berlinDayNumber(ms) {
 
 // ================================
 // 9 · Speaker-reveal countdown (P0-3)
-// Published CMS content is loaded independently; unavailable content keeps the card hidden.
+// Published CMS content is loaded independently; if it is unavailable, the static "soon" from the HTML stays.
 // Expiry hides digits and shows the CMS message. Accessible summaries and the one-second
 // timer cadence are unchanged, including motion and visibility resynchronization.
 // ================================
@@ -783,7 +783,8 @@ safeInit('countdown', () => {
         .then(payload => {
             if (controller.signal.aborted) return;
             const settings = payload && payload.result;
-            if (!settings || settings.countdownEnabled !== true) return;
+            if (!settings) return;                                  // keep the static "soon"
+            if (settings.countdownEnabled !== true) { card.hidden = true; return; }
             if (![settings.countdownHeading, settings.countdownLabel, settings.countdownExpiredMessage].every(hasText)) return;
             // CMS targets must identify an absolute instant, not the visitor's local time.
             if (typeof settings.countdownTarget !== 'string'
@@ -811,10 +812,8 @@ safeInit('countdown', () => {
             });
         })
         .catch(() => {
-            // Technical failure is not an editorial expiry state.
-            if (timer) clearInterval(timer);
-            timer = null;
-            card.hidden = true;
+            // Technical failure: keep the static "More to be announced / soon" from the HTML.
+            showFallback();
         })
         .finally(() => clearTimeout(timeout));
 });
