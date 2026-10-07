@@ -76,6 +76,9 @@
             card.appendChild(body);
             fragment.appendChild(card);
         });
+        // Keep the static fallback cards unless the CMS delivered at least one valid speaker.
+        if (!fragment.childNodes.length) return;
+        grid.querySelectorAll('.spk-card').forEach(function (card) { card.remove(); });
         // Keep the grid itself: its existing reveal observer and classes remain attached.
         grid.appendChild(fragment);
     }
@@ -92,6 +95,6 @@
         .then(function (payload) {
             if (!controller.signal.aborted) render(payload && payload.result);
         })
-        .catch(function () { /* No editorial fallback; other sections remain independent. */ })
+        .catch(function () { /* Static fallback cards in the HTML stay visible. */ })
         .finally(function () { clearTimeout(timeout); });
 })();

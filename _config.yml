@@ -13,3 +13,5 @@ exclude:
   - previous-speakers.html
   # Vorlage, aus der das Link-Vorschaubild (assets/og/fsbf-2026-og.jpg) gerendert wurde
   - assets/og/og-template.html
+  # Sanity Studio (CMS-Quellcode, wird separat betrieben)
+  - cms
