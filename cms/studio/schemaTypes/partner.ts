@@ -18,6 +18,18 @@ const paragraph = defineArrayMember({
   },
 })
 
+// Supplied company languages require readable text, but never require a translation.
+function validateDescription(value: unknown) {
+  if (value === undefined || value === null) return true
+  if (!Array.isArray(value)) return 'Enter meaningful company text or remove this language.'
+  const valid = value.every((block) => block && block._type === 'block'
+    && block.style === 'normal' && !block.listItem && Array.isArray(block.children)
+    && block.children.every((span: {_type?: string; text?: unknown; marks?: unknown} | null) =>
+      span && span._type === 'span' && typeof span.text === 'string' && Array.isArray(span.marks)))
+  return (valid && value.some((block) => block.children.some((span: {text: string}) => span.text.trim())))
+    || 'Enter meaningful company text or remove this language.'
+}
+
 const categories = ['platinum', 'gold', 'silver', 'corporate', 'event']
 
 export const partner = defineType({
@@ -61,11 +73,11 @@ export const partner = defineType({
       fields: [
         defineField({
           name: 'descriptionDe', title: 'Description (German)', type: 'array', of: [paragraph],
-          validation: (rule) => rule.required().min(1),
+          validation: (rule) => rule.custom(validateDescription),
         }),
         defineField({
           name: 'descriptionEn', title: 'Description (English)', type: 'array', of: [paragraph],
-          validation: (rule) => rule.required().min(1),
+          validation: (rule) => rule.custom(validateDescription),
         }),
         defineField({
           name: 'workshopHeading', title: 'Workshop Heading', type: 'string',

@@ -6329,6 +6329,21 @@ body.home2026 .ptier-label::before{content:'';flex:0 0 auto;width:8px;height:8px
 body.home2026 .ptier-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--tier),rgba(255,255,255,0));opacity:.45}
 body.home2026 .pcards{list-style:none;margin:0;padding:0;display:grid;gap:1rem}
 body.home2026 .pcards > li{display:flex;min-width:0}
+body.home2026 .pcards > li.partner-with-website{position:relative}
+body.home2026 .partner-with-website > .pcard .pinfo{margin-right:6rem}
+body.home2026 .partner-with-website > .pcard .pname{max-width:20ch;white-space:normal}
+body.home2026 .partner-with-website .pmore{position:absolute;top:50%;right:1.25rem;transform:translateY(-50%)}
+body.home2026 .partner-with-website > a.parrow{z-index:1;text-decoration:none}
+body.home2026 .partner-with-website > a.parrow:hover{opacity:1}
+body.home2026 .partner-with-website > a.parrow:focus-visible{outline:2px solid var(--color-accent);outline-offset:4px}
+/* Narrow cards: give the company name a full row instead of squeezing it beside controls. */
+@media (max-width:599px){
+    body.home2026 .partner-with-website > .pcard:not(.pcard--tile){display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}
+    body.home2026 .partner-with-website > .pcard:not(.pcard--tile) .plogo{grid-column:1;grid-row:1}
+    body.home2026 .partner-with-website > .pcard:not(.pcard--tile) .pinfo{grid-column:1 / -1;grid-row:2;margin-right:0}
+    body.home2026 .partner-with-website > .pcard:not(.pcard--tile) .pname{max-width:none;overflow-wrap:anywhere}
+    body.home2026 .partner-with-website > .pcard:not(.pcard--tile) .pmore{position:static;grid-column:2;grid-row:1;transform:none;margin-left:0;padding-left:0}
+}
 body.home2026 .pcards--lg{grid-template-columns:repeat(2,minmax(0,1fr))}
 body.home2026 .pcards--md{grid-template-columns:repeat(2,minmax(0,1fr))}
 body.home2026 .pcards--tile{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}

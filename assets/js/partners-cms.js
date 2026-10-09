@@ -78,8 +78,26 @@
         panel.id = 'pd-' + id;
         panel.setAttribute('aria-labelledby', 'pb-' + id);
         panel.querySelector('.pdetail-name').textContent = partner.name;
-        ['de', 'en'].forEach(lang => panel.querySelector('[data-lang="' + lang + '"]').appendChild(
-            paragraphs(partner.details[lang === 'de' ? 'descriptionDe' : 'descriptionEn'])));
+        // Render languages independently; invalid optional copy must not remove a partner.
+        const languages = [];
+        ['de', 'en'].forEach(lang => {
+            const container = panel.querySelector('[data-lang="' + lang + '"]');
+            try {
+                const content = paragraphs(partner.details[lang === 'de' ? 'descriptionDe' : 'descriptionEn']);
+                if (!text(content.textContent)) throw new Error('Empty company description');
+                container.appendChild(content);
+                container.hidden = languages.length > 0;
+                languages.push(lang);
+            } catch (_) {
+                container.remove();
+                panel.querySelector('[data-lang-btn="' + lang + '"]').remove();
+            }
+        });
+        if (!languages.length) panel.querySelector('.pdetail-lang').remove();
+        else panel.querySelectorAll('[data-lang-btn]').forEach(button => {
+            button.setAttribute('aria-pressed', String(button.getAttribute('data-lang-btn') === languages[0]));
+        });
+        if (!languages.length) return null;
         const workshop = panel.querySelector('.pdetail-workshop');
         if (partner.details.workshopText) {
             if (!text(partner.details.workshopHeading)) throw new Error('Missing workshop heading');
@@ -136,7 +154,13 @@
                         card.appendChild(node('span', 'sr-only', ' – website (opens in a new tab)'));
                         const arrow = node('span', 'parrow', '↗'); arrow.setAttribute('aria-hidden', 'true'); card.appendChild(arrow);
                     }
-                    const li = node('li', ''); li.appendChild(card);
+                    const li = node('li', panel && url ? 'partner-with-website' : ''); li.appendChild(card);
+                    // A sibling link avoids nesting an interactive link inside the Details button.
+                    if (panel && url) {
+                        const link = external(node('a', 'parrow', '↗'), url);
+                        link.setAttribute('aria-label', partner.name + ' website (opens in a new tab)');
+                        li.appendChild(link);
+                    }
                     const placements = [li];
                     const marqueeItems = lists.map(list => {
                         const item = node('li', 'lm-item'); item.appendChild(image(partner, list.hasAttribute('aria-hidden'))); placements.push(item); return item;
