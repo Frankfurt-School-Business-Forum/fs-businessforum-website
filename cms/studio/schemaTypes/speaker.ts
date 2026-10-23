@@ -48,6 +48,62 @@ export const speaker = defineType({
         || Boolean(value?.trim()) || 'Describe the company logo when one is supplied.'),
     }),
     defineField({
+      name: 'biographyDe', title: 'Biography (German)', type: 'array',
+      validation: (rule) => rule.custom((value) => {
+        if (value === undefined || value === null) return true
+        return value.some((block) => {
+          if (!block || typeof block !== 'object' || !('_type' in block) || block._type !== 'block'
+            || !('children' in block) || !Array.isArray(block.children)) return false
+          return block.children.some((span: unknown) => span && typeof span === 'object'
+            && 'text' in span && typeof span.text === 'string' && span.text.trim())
+        })
+          || 'Enter meaningful biography text or remove this language.'
+      }),
+      of: [{
+        type: 'block',
+        styles: [{title: 'Paragraph', value: 'normal'}],
+        lists: [],
+        marks: {
+          decorators: [{title: 'Bold', value: 'strong'}],
+          annotations: [{
+            name: 'link', type: 'object', title: 'Link',
+            fields: [{
+              name: 'href', type: 'url', title: 'URL',
+              validation: (rule) => rule.required().uri({scheme: ['http', 'https']}),
+            }],
+          }],
+        },
+      }],
+    }),
+    defineField({
+      name: 'biographyEn', title: 'Biography (English)', type: 'array',
+      validation: (rule) => rule.custom((value) => {
+        if (value === undefined || value === null) return true
+        return value.some((block) => {
+          if (!block || typeof block !== 'object' || !('_type' in block) || block._type !== 'block'
+            || !('children' in block) || !Array.isArray(block.children)) return false
+          return block.children.some((span: unknown) => span && typeof span === 'object'
+            && 'text' in span && typeof span.text === 'string' && span.text.trim())
+        })
+          || 'Enter meaningful biography text or remove this language.'
+      }),
+      of: [{
+        type: 'block',
+        styles: [{title: 'Paragraph', value: 'normal'}],
+        lists: [],
+        marks: {
+          decorators: [{title: 'Bold', value: 'strong'}],
+          annotations: [{
+            name: 'link', type: 'object', title: 'Link',
+            fields: [{
+              name: 'href', type: 'url', title: 'URL',
+              validation: (rule) => rule.required().uri({scheme: ['http', 'https']}),
+            }],
+          }],
+        },
+      }],
+    }),
+    defineField({
       name: 'sortOrder', title: 'Sort Order', type: 'number',
       validation: (rule) => rule.required().integer().min(0),
     }),
