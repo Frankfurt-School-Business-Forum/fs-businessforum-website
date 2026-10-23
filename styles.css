@@ -6798,3 +6798,33 @@ body.home2026 .spk-more .countdown-fallback{margin:0;padding:0 .08em .1em;font:i
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 @media (forced-colors:active){ body.home2026 .spk-more .spk-soon,
 body.home2026 .spk-more .countdown-fallback{background:none;-webkit-text-fill-color:CanvasText} }
+
+/* Optional inline biographies: front determines height; back text alone scrolls. */
+body.home2026 .spk-card--flip{perspective:1000px;overflow:visible;background:transparent;border:0}
+body.home2026 .spk-flip-inner{position:relative;flex:1;min-width:0;transform-style:preserve-3d;transition:transform .4s ease}
+body.home2026 .spk-card--flip.is-flipped .spk-flip-inner{transform:rotateY(180deg)}
+body.home2026 .spk-flip-front,body.home2026 .spk-flip-back{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+body.home2026 .spk-flip-front{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;overflow:hidden}
+body.home2026 .spk-flip-back{position:absolute;inset:0;z-index:2;background:var(--color-bg-secondary,#0a1018);display:flex;flex-direction:column;gap:.75rem;padding:1rem;transform:rotateY(180deg);overflow:hidden}
+body.home2026 .spk-info-button{position:relative;float:right;margin:0 0 .4rem .5rem;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--color-accent);font:italic 600 .875rem var(--font-display);cursor:pointer}
+body.home2026 .spk-flip-title{margin:0;padding-right:2.75rem;font:500 1.2rem/1.25 var(--font-display);overflow-wrap:anywhere}
+body.home2026 .spk-flip-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;flex-shrink:0}
+body.home2026 .spk-flip-languages{display:flex;gap:.4rem}
+body.home2026 .spk-return-button{position:absolute;top:.5rem;right:.5rem;width:36px;height:36px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--color-accent);font:400 1.15rem/1 var(--font-body);cursor:pointer}
+body.home2026 .spk-return-button::after{content:"";position:absolute;inset:-4px}
+body.home2026 .spk-flip-content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior-y:contain;overflow-wrap:anywhere;font-size:.9375rem;line-height:1.55}
+body.home2026 .spk-flip-content p{margin:0 0 1rem}
+body.home2026 .spk-flip-content a{color:var(--color-accent);text-decoration:underline}
+body.home2026 .spk-card--flip :focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+html.motion-paused body.home2026 .spk-flip-inner{transition:none}
+@media (prefers-reduced-motion:reduce){body.home2026 .spk-flip-inner{transition:none}}
+
+/* Compact hint stays within the body padding below the portrait; never intercepts taps. */
+body.home2026 .spk-info-button::after{content:"View bio";position:absolute;bottom:calc(100% + 1px);right:0;white-space:nowrap;padding:0 .35rem;border-radius:4px;background:var(--color-bg-secondary,#0a1018);color:var(--color-text);font:400 .6875rem/.75rem var(--font-body);pointer-events:none;visibility:hidden}
+body.home2026 .spk-info-button:focus-visible::after{visibility:visible}
+@media (hover:hover) and (pointer:fine){body.home2026 .spk-info-button:hover::after{visibility:visible}}
+
+/* Smaller visual circles; button boxes and expanded close hit area stay unchanged. */
+body.home2026 .spk-info-button::before{content:"";position:absolute;inset:8px;border:1px solid var(--color-accent);border-radius:50%;pointer-events:none}
+body.home2026 .spk-return-button::before{content:"";position:absolute;inset:4px;border:1px solid var(--color-accent);border-radius:50%;background:var(--color-bg-secondary);pointer-events:none;z-index:-1}
+body.home2026 .spk-return-button{isolation:isolate}
