@@ -6828,3 +6828,21 @@ body.home2026 .spk-info-button:focus-visible::after{visibility:visible}
 body.home2026 .spk-info-button::before{content:"";position:absolute;inset:8px;border:1px solid var(--color-accent);border-radius:50%;pointer-events:none}
 body.home2026 .spk-return-button::before{content:"";position:absolute;inset:4px;border:1px solid var(--color-accent);border-radius:50%;background:var(--color-bg-secondary);pointer-events:none;z-index:-1}
 body.home2026 .spk-return-button{isolation:isolate}
+
+/* Event Partners only: native carousel remains inside the existing container. */
+body.home2026 #event-partners{min-width:0;max-width:100%}
+body.home2026 #event-partners-track{box-sizing:border-box;width:100%;max-width:100%;min-width:0;display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:calc((100% - 5rem)/6);gap:1rem;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding-inline:4px;padding:4px 4px .75rem;overscroll-behavior-x:contain}
+body.home2026 #event-partners-track > li{min-width:0;scroll-snap-align:start}
+body.home2026 #event-partners-track .pcard{width:100%;min-width:0}
+body.home2026 #event-partners-track .pname{overflow-wrap:anywhere}
+body.home2026 .event-partner-controls{display:flex;justify-content:flex-end;gap:.5rem;margin:0 0 .75rem}
+body.home2026 .event-partner-controls[hidden]{display:none}
+body.home2026 .event-partner-controls button{min-height:44px;padding:.4rem .75rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--color-accent);font:inherit;cursor:pointer}
+body.home2026 .event-partner-controls button:disabled{opacity:.4;cursor:default}
+body.home2026 .event-partner-controls button:focus-visible,body.home2026 #event-partners-track:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
+@media (max-width:1199px){body.home2026 #event-partners-track{grid-auto-columns:calc((100% - 3rem)/4)}}
+@media (max-width:899px){body.home2026 #event-partners-track{grid-auto-columns:calc((100% - 2rem)/3)}}
+@media (max-width:599px){body.home2026 #event-partners-track{grid-auto-columns:calc((100% - .6rem)/2);gap:.6rem}}
+
+/* Autoplay scrolls continuously; reduced/paused motion retains the original scrollable track. */
+body.home2026 #event-partners-track.event-ticker-active{scroll-snap-type:none;scroll-behavior:auto}
