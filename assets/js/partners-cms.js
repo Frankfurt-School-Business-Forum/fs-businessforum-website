@@ -4,6 +4,130 @@
     const section = document.getElementById('partners');
     if (!section || section.dataset.cmsPartnersStarted) return;
     section.dataset.cmsPartnersStarted = 'true';
+    // The originals stay in place; presentation-only copies provide a seamless repeat.
+    const eventTrack = document.getElementById('event-partners-track');
+    if (eventTrack && !eventTrack.dataset.carouselReady) {
+        eventTrack.dataset.carouselReady = 'true';
+        const tier = document.getElementById('event-partners');
+        const controls = tier.querySelector('.event-partner-controls');
+        const previous = controls.querySelector('[data-event-prev]');
+        const next = controls.querySelector('[data-event-next]');
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let period = 0, phase = 0, lastTime = 0, frame = 0, rebuildFrame = 0;
+        let hovering = false, touching = false, dragging = false, settling = false;
+        let settleTimer;
+        const originals = () => Array.from(eventTrack.children).filter(el => !el.hasAttribute('data-event-copy'));
+        const motionAllowed = () => !reduced.matches && !document.documentElement.classList.contains('motion-paused');
+        function paused() {
+            return !motionAllowed() || document.hidden || hovering || touching || settling
+                || tier.contains(document.activeElement) || !!tier.querySelector('.pcard--toggle[aria-expanded="true"]');
+        }
+        function updateControls() {
+            const end = Math.max(0, eventTrack.scrollWidth - eventTrack.clientWidth);
+            controls.hidden = end <= 2;
+            previous.disabled = eventTrack.scrollLeft <= 2;
+            next.disabled = eventTrack.scrollLeft >= end - 2;
+        }
+        function animate(time) {
+            frame = 0;
+            const delta = lastTime ? Math.min(time - lastTime, 50) : 0;
+            lastTime = time;
+            if (period && !paused()) {
+                phase = (phase + delta * .018) % period; // 18 pixels per second.
+                eventTrack.scrollLeft = phase;
+            } else phase = eventTrack.scrollLeft;
+            if (!document.hidden && period && motionAllowed()) frame = requestAnimationFrame(animate);
+        }
+        function wake() {
+            if (!frame && period && motionAllowed() && !document.hidden) {
+                lastTime = 0;
+                frame = requestAnimationFrame(animate);
+            }
+        }
+        function rebuild() {
+            rebuildFrame = 0;
+            observer.disconnect();
+            eventTrack.querySelectorAll('[data-event-copy]').forEach(el => el.remove());
+            const cards = originals();
+            period = 0;
+            if (motionAllowed() && cards.length && eventTrack.clientWidth) {
+                // Enough complete repeats to cover the viewport even with just one partner.
+                const gap = parseFloat(getComputedStyle(eventTrack).columnGap) || 0;
+                const unit = cards[0].getBoundingClientRect().width + gap;
+                const repeats = unit > 0 ? Math.ceil(eventTrack.clientWidth / (unit * cards.length)) + 1 : 0;
+                for (let repeat = 0; repeat < repeats; repeat++) cards.forEach(original => {
+                    const copy = original.cloneNode(true);
+                    copy.setAttribute('data-event-copy', '');
+                    copy.setAttribute('aria-hidden', 'true');
+                    [copy, ...copy.querySelectorAll('[id]')].forEach(el => el.removeAttribute('id'));
+                    copy.querySelectorAll('img').forEach(img => { img.alt = ''; });
+                    const sources = original.querySelectorAll('a,button');
+                    copy.querySelectorAll('a,button').forEach((el, index) => {
+                        el.tabIndex = -1;
+                        el.removeAttribute('aria-controls');
+                        // Anchors retain their real href/target/rel, including modifier-click behaviour.
+                        if (el.tagName === 'BUTTON') el.addEventListener('click', event => {
+                            event.preventDefault();
+                            if (dragging) return;
+                            sources[index].focus({preventScroll: true});
+                            sources[index].click();
+                        });
+                        el.addEventListener('mousedown', event => event.preventDefault());
+                        el.addEventListener('focus', () => sources[index].focus({preventScroll: true}));
+                    });
+                    eventTrack.appendChild(copy);
+                });
+                const firstCopy = eventTrack.querySelector('[data-event-copy]');
+                if (firstCopy) period = firstCopy.getBoundingClientRect().left - cards[0].getBoundingClientRect().left;
+            }
+            eventTrack.classList.toggle('event-ticker-active', period > 0);
+            phase = period ? eventTrack.scrollLeft % period : eventTrack.scrollLeft;
+            eventTrack.scrollLeft = phase;
+            observer.observe(eventTrack, {childList: true});
+            updateControls();
+            wake();
+        }
+        function queueRebuild() {
+            if (!rebuildFrame) rebuildFrame = requestAnimationFrame(rebuild);
+        }
+        const observer = new MutationObserver(queueRebuild);
+        function settle() {
+            settling = true;
+            clearTimeout(settleTimer);
+            settleTimer = setTimeout(() => { settling = false; wake(); }, 1000);
+        }
+        function move(direction) {
+            settle();
+            eventTrack.scrollBy({left: direction * eventTrack.clientWidth, behavior: motionAllowed() ? 'smooth' : 'auto'});
+        }
+        previous.addEventListener('click', () => move(-1));
+        next.addEventListener('click', () => move(1));
+        eventTrack.addEventListener('scroll', updateControls, {passive: true});
+        eventTrack.addEventListener('wheel', settle, {passive: true});
+        tier.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') hovering = true; });
+        tier.addEventListener('pointerleave', () => { hovering = false; wake(); });
+        let startX = 0, startY = 0;
+        eventTrack.addEventListener('pointerdown', event => { touching = true; dragging = false; startX = event.clientX; startY = event.clientY; }, {passive: true});
+        eventTrack.addEventListener('pointermove', event => {
+            if (touching && Math.hypot(event.clientX - startX, event.clientY - startY) > 8) dragging = true;
+        }, {passive: true});
+        function release() { if (touching) { touching = false; settle(); } }
+        window.addEventListener('pointerup', release, {passive: true});
+        window.addEventListener('pointercancel', release, {passive: true});
+        eventTrack.addEventListener('click', event => {
+            if (dragging) { event.preventDefault(); event.stopImmediatePropagation(); }
+            dragging = false;
+        }, true);
+        tier.addEventListener('focusout', wake);
+        // Opening panels pauses motion; closing them resumes without touching Details handlers.
+        new MutationObserver(wake).observe(tier, {subtree: true, attributes: true, attributeFilter: ['aria-expanded']});
+        new MutationObserver(queueRebuild).observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
+        reduced.addEventListener('change', queueRebuild);
+        window.addEventListener('resize', queueRebuild, {passive: true});
+        document.addEventListener('visibilitychange', wake);
+        if ('ResizeObserver' in window) new ResizeObserver(queueRebuild).observe(eventTrack);
+        rebuild();
+    }
     const categories = ['platinum', 'gold', 'silver', 'corporate', 'event'];
     const text = value => typeof value === 'string' && value.trim().length > 0;
     const node = (tag, cls, value) => {
