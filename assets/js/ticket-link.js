@@ -40,7 +40,7 @@
 
     // Bewerbungsseite fuer Workshops, Alumni Roundtable, Coffee Chats, Wine Tasting (vollstaendige URL inkl. https://).
     // Leer = "Applications open soon" auf der ganzen Site.
-    var WORKSHOP_URL = ''; // TODO(Launch): URL der Workshop-Bewerbung eintragen, sobald die Seite existiert
+    var WORKSHOP_URL = 'https://app.fs-businessforum.com/sessions'; // Bewerbung in Connect, live seit 27.10.2026
 
     /* P2-14: eingehende utm_*-Parameter (Kampagnen-Links) an den Shop durchreichen.
        Nur Parameter der aktuellen Seite, kein Speichern (keine Cookies/Storage). */
