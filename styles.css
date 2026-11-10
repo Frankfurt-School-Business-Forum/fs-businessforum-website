@@ -6846,3 +6846,35 @@ body.home2026 .event-partner-controls button:focus-visible,body.home2026 #event-
 
 /* Autoplay scrolls continuously; reduced/paused motion retains the original scrollable track. */
 body.home2026 #event-partners-track.event-ticker-active{scroll-snap-type:none;scroll-behavior:auto}
+
+/* ---------- Program bar (10 Nov 2026) ----------
+   Fixed strip above the header pointing to the program in the app. html.has-announce is set by the head
+   script (unless dismissed, see assets/js/program-bar.js); the header and every header-dependent offset
+   move down by --announce-h. Without JS the bar stays hidden – the "Program" nav link still works. */
+:root{--announce-h:0px}
+html.has-announce{--announce-h:40px;scroll-padding-top:calc(var(--nav-height) + var(--announce-h) + 16px)}
+.announce-bar{display:none}
+html.has-announce .announce-bar{position:fixed;top:0;left:0;right:0;z-index:1001;display:flex;align-items:center;justify-content:center;
+    height:var(--announce-h);padding:0 3rem;background:var(--color-accent);color:var(--color-bg)}
+.announce-link{display:inline-flex;align-items:center;gap:.65rem;min-height:var(--announce-h);color:inherit;text-decoration:none;
+    font:600 .875rem/1.2 var(--font-body);letter-spacing:.01em;white-space:nowrap}
+.announce-cta{text-decoration:underline;text-underline-offset:3px}
+.announce-link:hover .announce-cta,.announce-link:focus-visible .announce-cta{text-decoration-thickness:2px}
+.announce-link:focus-visible,.announce-close:focus-visible{outline:2px solid var(--color-bg);outline-offset:2px}
+.announce-close{position:absolute;right:max(.25rem,env(safe-area-inset-right));top:50%;transform:translateY(-50%);
+    width:40px;height:40px;display:flex;align-items:center;justify-content:center;padding:0;border:0;background:none;
+    color:inherit;font-size:1.35rem;line-height:1;cursor:pointer}
+html.has-announce body.home2026 .nav{top:var(--announce-h)}
+html.has-announce body.home2026 .hero{padding-top:calc(var(--nav-height) + var(--announce-h) + 2.5rem)}
+html.has-announce body.home2026 .mobile-menu-content{padding-top:calc(var(--nav-height) + var(--announce-h) + .25rem)}
+@media (max-width:599px){
+    html.has-announce{--announce-h:38px}
+    html.has-announce .announce-bar{padding:0 2.5rem 0 .75rem}
+    .announce-link{gap:.5rem;font-size:.8125rem}
+    html.has-announce body.home2026 .hero{padding-top:calc(var(--nav-height) + var(--announce-h) + 1.5rem)}
+}
+@media (max-width:359px){ .announce-text{display:none} }
+@media (orientation:landscape) and (max-height:500px){
+    html.has-announce body.home2026 .hero{padding-top:calc(var(--nav-height) + var(--announce-h) + 1rem)}
+}
+@media print{ .announce-bar{display:none!important} }
