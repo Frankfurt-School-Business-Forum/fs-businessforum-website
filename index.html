@@ -33,6 +33,8 @@
         var r = d.documentElement;
         r.classList.replace('no-js', 'js');
         try { if (w.localStorage.getItem('fsbf-motion') === 'paused') r.classList.add('motion-paused'); } catch (e) {}
+        // Program bar (10 Nov 2026): visible unless dismissed before – set before the first paint, so no layout shift
+        try { if (w.localStorage.getItem('fsbf-program-bar') !== 'closed') r.classList.add('has-announce'); } catch (e) { r.classList.add('has-announce'); }
         r.classList.add('has-js-reveal');
         function failsafe() {
             if (w.__revealReady) return;
@@ -58,7 +60,7 @@
     <!-- P1-8: hero poster per viewport (it is the container background; the <video> has no poster attribute) -->
     <link rel="preload" href="assets/img/hero/poster-mobile.webp" as="image" type="image/webp" media="(max-width: 767px)">
     <link rel="preload" href="assets/img/hero/poster-1280.webp" as="image" type="image/webp" media="(min-width: 768px)">
-    <link rel="stylesheet" href="styles.css?v=20261105-ticker1">
+    <link rel="stylesheet" href="styles.css?v=20261110-program1">
 
     <!-- P1-9: Event schema (Google Event rich result).
          Zeiten und Angebot laut Eventbrite (13.11. 09:00 bis 14.11. 22:00, 29,99 EUR, Verkauf seit 28.09.2026).
@@ -111,6 +113,7 @@
     <script defer src="script.js?v=20261006a"></script>
     <script defer src="assets/js/partners-cms.js?v=20261105-ticker1"></script>
     <script defer src="assets/js/speakers-cms.js?v=20261023-flip1"></script>
+    <script defer src="assets/js/program-bar.js?v=20261110a"></script>
 </head>
 <body class="home2026 va">
 
@@ -121,6 +124,16 @@
     <div class="scroll-progress" aria-hidden="true"></div>
     <div class="grain-overlay" aria-hidden="true"></div>
     <!-- P2-8: no custom cursor ring any more – the native pointer stays -->
+
+    <!-- Program bar (10 Nov 2026): fixed strip above the header, shown via html.has-announce (head script),
+         dismissed per browser in assets/js/program-bar.js. The program itself lives in the app (always current). -->
+    <div class="announce-bar" role="region" aria-label="Program announcement">
+        <a class="announce-link" href="https://app.fs-businessforum.com/event?tab=program&amp;utm_source=website&amp;utm_content=bar">
+            <span class="announce-text">The full program is live</span>
+            <span class="announce-cta">View program <span aria-hidden="true">→</span></span>
+        </a>
+        <button class="announce-close" type="button" aria-label="Dismiss program announcement"><span aria-hidden="true">×</span></button>
+    </div>
 
     <!-- Header (Abschnitt 6 / P1-1 / P3-3 / P3-11): full nav from 900 px, logo + menu button below -->
     <header class="nav">
@@ -134,6 +147,7 @@
             </a>
             <nav class="nav-links" aria-label="Main">
                 <a href="#speakers" class="nav-link">Speakers</a>
+                <a href="https://app.fs-businessforum.com/event?tab=program&amp;utm_source=website&amp;utm_content=nav" class="nav-link">Program</a>
                 <a href="#partners" class="nav-link">Partners</a>
                 <a href="#workshops" class="nav-link">Workshops</a>
                 <a href="#tickets" class="nav-link">Tickets</a>
@@ -152,6 +166,7 @@
         <div class="mobile-menu-content">
             <ul class="mobile-menu-list">
                 <li><a href="#speakers" class="mobile-link">Speakers</a></li>
+                <li><a href="https://app.fs-businessforum.com/event?tab=program&amp;utm_source=website&amp;utm_content=menu" class="mobile-link">Program</a></li>
                 <li><a href="#partners" class="mobile-link">Partners</a></li>
                 <li><a href="#workshops" class="mobile-link">Workshops</a></li>
                 <li><a href="#tickets" class="mobile-link">Tickets &amp; Pricing</a></li>
@@ -199,7 +214,7 @@
             <p class="hero-proof">Last year: 700+ participants from 10+ universities.</p>
             <div class="hero-cta">
                 <a href="tickets.html" class="btn btn--primary btn-shimmer" data-ticket-link data-cta="hero">Get Tickets <span aria-hidden="true">→</span></a>
-                <a href="#speakers" class="btn btn--secondary">Meet the speakers</a>
+                <a href="https://app.fs-businessforum.com/event?tab=program&amp;utm_source=website&amp;utm_content=hero" class="btn btn--secondary">See the program</a>
             </div>
             <p class="hero-trust"><span class="hero-trust-label">Previous speakers from</span> UniCredit · Morgan&nbsp;Stanley · thyssenkrupp · BNP&nbsp;Paribas</p>
         </div>
@@ -307,7 +322,7 @@
             <header class="sec-head" data-reveal>
                 <p class="label-lg sec-eyebrow">Line-up</p>
                 <h2 class="sec-title" id="speakers-title">Speakers 2026</h2>
-                <p class="sec-lead">The first speakers are confirmed. More names from business, finance and politics follow in waves.</p>
+                <p class="sec-lead">Leaders from business, finance and politics on our main stage. The full two-day program is live.</p>
             </header>
 
             <!-- Published visible speaker records are rendered independently from Sanity. -->
@@ -359,26 +374,15 @@
                     </div>
                 </article>
             </div>
-            <!-- Announcement content comes from published Event Settings; ghosts remain decorative. -->
-            <div class="spk-more" data-reveal data-cms-countdown>
+            <!-- 10 Nov 2026: line-up complete – the speaker-reveal countdown ("More to be announced") is replaced by a
+                 link to the full program in the app. Without #speakerCountdown the countdown code in script.js stays idle. -->
+            <div class="spk-more spk-more--program" data-reveal>
                 <ul class="spk-ghosts" aria-hidden="true">
                     <li class="spk-ghost"></li><li class="spk-ghost"></li><li class="spk-ghost"></li><li class="spk-ghost"></li>
                 </ul>
                 <div class="spk-more-overlay">
-                    <p class="spk-more-title">More to be announced</p>
-                    <div class="speaker-countdown">
-                        <div class="countdown-live" hidden>
-                            <p class="countdown-label" aria-hidden="true">Next speakers in</p>
-                            <p class="sr-only countdown-sr" role="timer" aria-live="off">Next speaker reveal soon</p>
-                            <div class="countdown-timer" id="speakerCountdown" aria-hidden="true">
-                                <div class="countdown-unit"><span class="countdown-num" data-cd="days">00</span><span class="countdown-cap">Days</span></div>
-                                <div class="countdown-unit"><span class="countdown-num" data-cd="hours">00</span><span class="countdown-cap">Hrs</span></div>
-                                <div class="countdown-unit"><span class="countdown-num" data-cd="minutes">00</span><span class="countdown-cap">Min</span></div>
-                                <div class="countdown-unit"><span class="countdown-num" data-cd="seconds">00</span><span class="countdown-cap">Sec</span></div>
-                            </div>
-                        </div>
-                        <p class="countdown-fallback">soon</p>
-                    </div>
+                    <p class="spk-more-title">The full program is live</p>
+                    <a class="btn btn--primary" href="https://app.fs-businessforum.com/event?tab=program&amp;utm_source=website&amp;utm_content=speakers">View the program <span aria-hidden="true">→</span></a>
                 </div>
             </div>
 
